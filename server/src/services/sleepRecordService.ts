@@ -79,5 +79,26 @@ export const sleepRecordService = {
       .where(and(eq(sleepRecords.id, id), eq(sleepRecords.userId, userId)))
       .returning()
     return result[0]
-  }
+  },
+
+  async getStats(userId: number) {
+    const db = await getDb();
+    const records = await db.select().from(sleepRecords).where(eq(sleepRecords.userId, userId));
+    const totalRecords = records.length;
+    const totalSleepHours = records.reduce((sum, record) => sum + record.sleepHours, 0);
+    const averageSleepHours = totalRecords > 0 ? Math.round((totalSleepHours / totalRecords) * 10) / 10 : 0;
+    // 최근 7일간의 수면 시간 (오름차순)
+    const last7Days = records
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+      .slice(-7)
+      .map(record => ({
+        date: record.date,
+        sleepHours: record.sleepHours
+      }));
+    return {
+      totalRecords,
+      averageSleepHours,
+      last7Days
+    };
+  },
 } 

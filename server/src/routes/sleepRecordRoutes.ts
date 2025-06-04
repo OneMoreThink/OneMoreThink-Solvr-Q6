@@ -16,4 +16,7 @@ export async function sleepRecordRoutes(fastify: FastifyInstance) {
 
   // 수면 기록 삭제
   fastify.delete('/sleep-records/:id', sleepRecordController.deleteSleepRecord)
+
+  // 통계 엔드포인트 추가
+  fastify.get('/sleep-records/stats', sleepRecordController.getStats);
 } 

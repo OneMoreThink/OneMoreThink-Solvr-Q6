@@ -3,14 +3,15 @@ import Database from 'better-sqlite3'
 import env from '../config/env'
 import * as schema from './schema'
 import { Database as DrizzleDatabase } from '../types/database'
+import { fileURLToPath } from 'url'
+import { dirname, join } from 'path'
 
-let db: DrizzleDatabase | null = null
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const sqlite = new Database(env.DATABASE_URL)
+export const db = drizzle(sqlite, { schema }) as DrizzleDatabase
 
 export async function getDb(): Promise<DrizzleDatabase> {
-  if (!db) {
-    const sqlite = new Database(env.DATABASE_URL)
-    db = drizzle(sqlite, { schema }) as DrizzleDatabase
-  }
   return db
 }
 

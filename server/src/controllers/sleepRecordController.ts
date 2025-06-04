@@ -104,5 +104,16 @@ export const sleepRecordController = {
     } catch (error) {
       return reply.status(500).send({ error: 'Failed to delete sleep record' })
     }
-  }
+  },
+
+  async getStats(_request: any, reply: any) {
+    try {
+      const userId = 1;
+      const stats = await sleepRecordService.getStats(userId);
+      return reply.send(stats);
+    } catch (error) {
+      // 에러가 나도 빈 통계 객체 반환
+      return reply.send({ totalRecords: 0, averageSleepHours: 0, last7Days: [] });
+    }
+  },
 } 

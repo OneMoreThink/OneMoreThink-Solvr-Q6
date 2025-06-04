@@ -1,4 +1,5 @@
 import { sqliteTable, text, integer, real } from 'drizzle-orm/sqlite-core'
+import { sql } from 'drizzle-orm'
 
 // 사용자 테이블 스키마
 export const users = sqliteTable('users', {
@@ -19,16 +20,12 @@ export const users = sqliteTable('users', {
 // 수면 기록 테이블 스키마
 export const sleepRecords = sqliteTable('sleep_records', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  userId: integer('user_id').notNull().references(() => users.id),
+  userId: integer('user_id').notNull(),
   date: text('date').notNull(),
   sleepHours: real('sleep_hours').notNull(),
   notes: text('notes'),
-  createdAt: text('created_at')
-    .notNull()
-    .$defaultFn(() => new Date().toISOString()),
-  updatedAt: text('updated_at')
-    .notNull()
-    .$defaultFn(() => new Date().toISOString())
+  createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text('updated_at').default(sql`CURRENT_TIMESTAMP`),
 })
 
 // 사용자 타입 정의

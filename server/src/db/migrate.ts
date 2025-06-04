@@ -69,6 +69,8 @@ async function runMigration() {
       )
     `)
 
+    // sleep_records 테이블 삭제(있으면)
+    sqlite.exec('DROP TABLE IF EXISTS sleep_records;')
     // sleep_records 테이블 생성
     sqlite.exec(`
       CREATE TABLE IF NOT EXISTS sleep_records (
@@ -77,9 +79,8 @@ async function runMigration() {
         date TEXT NOT NULL,
         sleep_hours REAL NOT NULL,
         notes TEXT,
-        created_at TEXT NOT NULL,
-        updated_at TEXT NOT NULL,
-        FOREIGN KEY (user_id) REFERENCES users(id)
+        created_at TEXT DEFAULT (datetime('now')),
+        updated_at TEXT DEFAULT (datetime('now'))
       )
     `)
 
