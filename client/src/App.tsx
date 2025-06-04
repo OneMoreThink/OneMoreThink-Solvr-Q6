@@ -4,7 +4,7 @@ import { SleepRecordList } from './components/SleepRecordList'
 import { SleepRecordForm } from './components/SleepRecordForm'
 import { SleepRecord } from './types/sleepRecord'
 import Navigation from './components/Navigation'
-import SleepStats from './components/SleepStats'
+import { SleepStats } from './components/SleepStats'
 
 function App() {
   const [refreshKey, setRefreshKey] = useState(0)

@@ -1,14 +1,13 @@
-import Fastify from 'fastify'
+import fastify from 'fastify'
 import cors from '@fastify/cors'
 import env from './config/env'
 import { initializeDatabase, getDb } from './db'
-import runMigration from './db/migrate'
 import { createUserService } from './services/userService'
-import { createRoutes } from './routes'
+import { createRoutes } from './routes/index'
 import { AppContext } from './types/context'
 
 // Fastify 인스턴스 생성
-const fastify = Fastify({
+const server = fastify({
   logger: {
     level: env.LOG_LEVEL,
     transport: {
@@ -25,15 +24,11 @@ const fastify = Fastify({
 async function start() {
   try {
     // CORS 설정
-    await fastify.register(cors, {
+    await server.register(cors, {
       origin: env.CORS_ORIGIN,
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       credentials: true
     })
-
-    // 데이터베이스 마이그레이션 및 초기화
-    await runMigration()
-    await initializeDatabase()
 
     // 서비스 및 컨텍스트 초기화
     const db = await getDb()
@@ -42,14 +37,14 @@ async function start() {
     }
 
     // 라우트 등록
-    await fastify.register(createRoutes(context))
+    await createRoutes(context)(server)
 
     // 서버 시작
-    await fastify.listen({ port: env.PORT, host: env.HOST })
+    await server.listen({ port: env.PORT, host: env.HOST })
 
     console.log(`서버가 http://${env.HOST}:${env.PORT} 에서 실행 중입니다.`)
   } catch (error) {
-    fastify.log.error(error)
+    server.log.error(error)
     process.exit(1)
   }
 }
